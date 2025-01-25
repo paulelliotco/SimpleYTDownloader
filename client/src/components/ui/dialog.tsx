@@ -51,6 +51,19 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+/**
+* A React functional component that renders a styled div element.
+* @example
+* const element = componentName({ className: "my-class", id: "my-id" });
+* // returns a React div element with specified class and other provided props.
+* @param {Object} param0 - Destructured props object.
+* @param {string} param0.className - Additional class names to apply for styling.
+* @param {Object} param0.props - Other HTML attributes to pass to the div element.
+* @returns {JSX.Element} A JSX element representing the div with given classes and attributes.
+* @description
+*   - Merges custom class names with default styling for layout and text alignment.
+*   - Supports additional props through spread syntax to enhance the div's attributes.
+*/
 const DialogHeader = ({
   className,
   ...props
@@ -65,6 +78,17 @@ const DialogHeader = ({
 )
 DialogHeader.displayName = "DialogHeader"
 
+/**
+* Creates a responsive div container with custom class name and additional properties.
+* @example
+* yourFunctionName({ className: "custom-class", ...props })
+* Result: A div element with applied class styles and passed properties.
+* @param {React.HTMLAttributes<HTMLDivElement>} {className, ...props} - Object containing class name and any HTML attributes for the div.
+* @returns {JSX.Element} The JSX element representing the styled and responsive div container.
+* @description
+*   - Utilizes Tailwind CSS for responsive styling.
+*   - Supports additional HTML attributes spread through props.
+*/
 const DialogFooter = ({
   className,
   ...props

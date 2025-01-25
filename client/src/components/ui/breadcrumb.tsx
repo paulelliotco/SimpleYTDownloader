@@ -72,6 +72,18 @@ const BreadcrumbPage = React.forwardRef<
 ))
 BreadcrumbPage.displayName = "BreadcrumbPage"
 
+/**
+* Renders a list item with specific styling and an optional chevron icon.
+* @example
+* BreadcrumbItem({ children: <span>Item</span>, className: "custom-class" })
+* // Returns: <li role="presentation" aria-hidden="true" class="... custom-class">...</li>
+* @param {object} {children, className, ...props} - Destructured properties including children elements, custom class names, and other list item attributes.
+* @returns {JSX.Element} A styled list item element with optional chevron icon as a child.
+* @description
+*   - Sets a CSS class to adjust the size of SVG elements if present.
+*   - Defaults to a downward chevron icon if no children are provided.
+*   - Uses role "presentation" and "aria-hidden" attributes for accessibility compliance.
+*/
 const BreadcrumbSeparator = ({
   children,
   className,
@@ -88,6 +100,23 @@ const BreadcrumbSeparator = ({
 )
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator"
 
+/**
+* Renders a span element styled as a button for displaying more options.
+* @example
+* renderMoreButton("custom-class")
+* <span class="flex h-9 w-9 items-center justify-center custom-class">
+*   <MoreHorizontal class="h-4 w-4" />
+*   <span class="sr-only">More</span>
+* </span>
+* @param {React.ComponentProps<"span">} props - Additional properties applied to the span element.
+* @param {string} [className] - Optional custom CSS class to style the span component.
+* @returns {JSX.Element} A styled span element containing an icon and a screen reader-only text.
+* @description
+*   - Uses the 'MoreHorizontal' component to render a horizontal ellipsis icon.
+*   - Includes an aria-hidden attribute to hide this element from screen readers.
+*   - The 'sr-only' span provides a textual alternative for screen readers.
+*   - Combines default styles with any additional className passed through props.
+*/
 const BreadcrumbEllipsis = ({
   className,
   ...props

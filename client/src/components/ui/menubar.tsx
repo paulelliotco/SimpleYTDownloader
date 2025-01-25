@@ -198,6 +198,18 @@ const MenubarSeparator = React.forwardRef<
 ))
 MenubarSeparator.displayName = MenubarPrimitive.Separator.displayName
 
+/**
+ * Renders a span element with styling for a menubar component.
+ * @example
+ * MenubarSpan({ className: "custom-class", key: "menu-span" })
+ * // Returns: <span class="ml-auto text-xs tracking-widest text-muted-foreground custom-class" key="menu-span" />
+ * @param {Object} { className, ...props } - Destructured arguments: `className` for additional styling, `...props` for additional span attributes.
+ * @returns {JSX.Element} A span element with combined class names and any additional HTML attributes passed in.
+ * @description
+ *   - Utilizes the `cn` utility to combine default and custom class names.
+ *   - Applies text styling for tracking and muted foreground.
+ *   - Designed to be used in the UI menubar for consistent text styling.
+ */
 const MenubarShortcut = ({
   className,
   ...props

@@ -21,6 +21,18 @@ const formSchema = z.object({
   is_playlist: z.boolean().default(false),
 });
 
+/**
+* Renders a form component for initiating and configuring downloads.
+* @example
+* DownloadForm()
+* <JSX.Element> // Rendered form for download.
+* @returns {JSX.Element} Rendered form component for initiating video downloads.
+* @description
+*   - Utilizes a form to collect inputs like URL, format, and quality from the user.
+*   - Triggers a mutation function to start the download and shows a toast notification upon success or error.
+*   - Default values for the form are set to an empty URL, 'mp4' format, and 'high' quality.
+*   - Resets the form fields after a successful download initiation.
+*/
 export default function DownloadForm() {
   const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
