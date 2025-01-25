@@ -43,7 +43,7 @@ export default function DownloadList() {
         <div key={download.id} className="border rounded-lg p-4 space-y-2">
           <div className="flex items-center justify-between">
             <h3 className="font-medium truncate flex-1 pr-4">
-              {download.title || 'Starting download...'}
+              {download.title || (download.status === 'downloading' ? 'Downloading...' : 'Starting download...')}
             </h3>
             <div className="flex items-center gap-2">
               {download.status === "paused" ? (
@@ -85,7 +85,7 @@ export default function DownloadList() {
             <>
               <Progress value={download.progress || 0} className="h-2" />
               <div className="flex justify-between text-sm text-muted-foreground">
-                <span className="capitalize">{download.status}</span>
+                <span className="capitalize">{download.status === 'downloading' ? 'Downloading' : download.status}</span>
                 <span>{download.progress ? Math.round(download.progress) : 0}%</span>
               </div>
             </>
@@ -111,7 +111,7 @@ export default function DownloadList() {
                   {download.items.map((item: any, index: number) => (
                     <div key={index} className="pl-4 border-l">
                       <div className="text-sm font-medium truncate">
-                        {item.title}
+                        {item.title || (item.status === 'downloading' ? 'Downloading...' : 'Waiting...')}
                       </div>
                       <div className="flex items-center gap-2">
                         <Progress
