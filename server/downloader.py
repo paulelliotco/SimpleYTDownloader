@@ -93,28 +93,26 @@ async def create_download(request: DownloadRequest):
                     else:
                         progress = 0
 
-                    if downloads[download_id]["items"]:
-                        downloads[download_id]["items"][-1]["progress"] = progress
+                    downloads[download_id]['progress'] = progress
+                    downloads[download_id]['title'] = d.get('filename', '').replace('downloads/', '')
+                    downloads[download_id]['status'] = 'downloading'
 
-                    if downloads[download_id]["total_items"] > 0:
-                        total_progress = (
-                            (downloads[download_id]["current_item"] * 100 + progress) /
-                            downloads[download_id]["total_items"]
-                        )
-                        downloads[download_id]["progress"] = total_progress
-                    else:
-                        downloads[download_id]["progress"] = progress
+                    if downloads[download_id]['items']:
+                        downloads[download_id]['items'][-1]['progress'] = progress
+                        downloads[download_id]['items'][-1]['title'] = d.get('filename', '').replace('downloads/', '')
+                        downloads[download_id]['items'][-1]['status'] = 'downloading'
 
                     downloads[download_id]["title"] = d.get('filename', '').replace('downloads/', '')
                 except Exception as e:
                     print(f"Error updating progress: {e}")
 
             elif d['status'] == 'finished':
-                if downloads[download_id]["items"]:
-                    downloads[download_id]["items"][-1]["status"] = "completed"
-                    downloads[download_id]["items"][-1]["progress"] = 100
-                downloads[download_id]["current_item"] += 1
-
+                if downloads[download_id]['items']:
+                    downloads[download_id]['items'][-1]['status'] = 'completed'
+                    downloads[download_id]['items'][-1]['progress'] = 100
+                downloads[download_id]['current_item'] += 1
+                downloads[download_id]['status'] = 'completed' if downloads[download_id]['current_item'] >= downloads[download_id]['total_items'] else 'downloading'
+                downloads[download_id]['progress'] = 100 if downloads[download_id]['status'] == 'completed' else downloads[download_id]['progress']
             elif d['status'] == 'error':
                 if downloads[download_id]["items"]:
                     downloads[download_id]["items"][-1]["status"] = "error"
