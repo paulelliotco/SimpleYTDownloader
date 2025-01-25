@@ -37,7 +37,7 @@ export default function DownloadList() {
   const togglePlaylist = (id: string) => {
     setOpenPlaylists(prev => ({
       ...prev,
-      [id]: !prev[id]
+      [id]: !prev[id],
     }));
   };
 
