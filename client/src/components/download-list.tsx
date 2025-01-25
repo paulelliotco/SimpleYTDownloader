@@ -7,6 +7,18 @@ import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
+/**
+* Component to display, manage, and monitor the list of downloads
+* @example
+* <DownloadList />
+* // Renders a list of active downloads with controls to pause, resume, and cancel each download
+* @returns {JSX.Element} React component displaying the download list with controls.
+* @description
+*   - Uses the `useQuery` hook to fetch and manage the state of ongoing downloads.
+*   - Implements Server-Sent Events for real-time updates on download statuses.
+*   - Collapsible UI for handling download playlists and their items.
+*   - Provides user interaction buttons to pause, resume, and cancel downloads with specific status restrictions.
+*/
 export default function DownloadList() {
   const { data: downloads = [], refetch } = useQuery({
     queryKey: ["/api/downloads"],

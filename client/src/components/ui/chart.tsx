@@ -65,6 +65,21 @@ const ChartContainer = React.forwardRef<
 })
 ChartContainer.displayName = "Chart"
 
+/**
+* Generates a style element with color configurations for a chart based on themes
+* @example
+* generateChartStyles({ id: 'chart1', config: {...} })
+* <style dangerouslySetInnerHTML={{ __html: '...styles...' }} />
+* @param {Object} params - Object containing chart configuration details.
+* @param {string} params.id - The unique identifier for the chart.
+* @param {ChartConfig} params.config - Configuration object containing theme and color settings.
+* @returns {JSX.Element|null} A style element with the chart's color styles or null if no color configuration is present.
+* @description
+*   - Applies color styles based on the chart's id and configuration.
+*   - Uses 'dangerouslySetInnerHTML' to directly inject styles into the HTML.
+*   - Ensures that theme-specific colors override default colors where applicable.
+*   - Returns null if there are no color or theme settings in the configuration.
+*/
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([_, config]) => config.theme || config.color
@@ -315,6 +330,20 @@ const ChartLegendContent = React.forwardRef<
 ChartLegendContent.displayName = "ChartLegend"
 
 // Helper to extract item config from a payload.
+/**
+ * Retrieves a configuration from a chart configuration object based on a key found in a given payload.
+ * @example
+ * getPayloadConfigFromPayload(chartConfig, somePayload, "labelKey")
+ * // Returns the configuration associated with the key from the payload.
+ * @param {ChartConfig} config - The chart configuration object to retrieve configuration from.
+ * @param {unknown} payload - The payload to examine to find the key.
+ * @param {string} key - The key used to look up the configuration in the payload and chart configuration.
+ * @returns {any} The configuration from the chart configuration object corresponding to the key found in the payload.
+ * @description
+ *   - If the payload is not an object, it returns undefined.
+ *   - If the key is found as a string in the primary payload or nested 'payload' object, it uses this string as the configuration key.
+ *   - If the key is not found, it defaults to using the provided key in the chart configuration.
+ */
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,

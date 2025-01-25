@@ -163,6 +163,21 @@ const ContextMenuSeparator = React.forwardRef<
 ))
 ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName
 
+/**
+* Renders a styled <span> element with additional properties.
+* @example
+* StyledSpan({ className: 'custom-class', style: { color: 'blue' } })
+* <span class="ml-auto text-xs tracking-widest text-muted-foreground custom-class" style="color: blue;"></span>
+* @param {Object} {className, ...props} - Properties to customize the <span> element.
+* @param {string} className - Additional class names for the <span> element.
+* @param {Object} props - Additional HTML attributes for the <span> element.
+* @returns {JSX.Element} A JSX span element with combined styles and additional properties.
+* @description
+*   - Combines predefined styles with user-specified class names.
+*   - Utilizes the `cn` function to concatenate class names.
+*   - Spreads remaining props onto the <span> element.
+*   - Used for layout or text decoration in a React component.
+*/
 const ContextMenuShortcut = ({
   className,
   ...props

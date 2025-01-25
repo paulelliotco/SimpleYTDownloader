@@ -36,6 +36,16 @@ async def read_root():
     return {"message": "Welcome to YouTube Downloader API", "status": "ok"}
 
 def get_format_string(format: str, quality: str) -> str:
+    """Get the appropriate format string for video/audio download based on desired format and quality.
+    Parameters:
+        - format (str): The video/audio format (e.g., 'mp4', 'webm', 'm4a', 'mp3').
+        - quality (str): The desired quality level (e.g., 'high', 'medium', 'low').
+    Returns:
+        - str: The format string used for downloading the specified format and quality.
+    Processing Logic:
+        - Utilizes pre-defined format options to map input parameters to the correct format string.
+        - Supports various formats ensuring appropriate quality strings for download.
+        - Leverages nested dictionaries for efficient retrieval of format options."""
     format_options = {
         "mp4": {
             "high": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
@@ -62,6 +72,17 @@ def get_format_string(format: str, quality: str) -> str:
 
 @app.post("/download")
 async def create_download(request: DownloadRequest):
+    """Create a new download process using a provided DownloadRequest, managing progress and status.
+    Parameters:
+        - request (DownloadRequest): The download request containing the details required such as URL, format, quality, and whether it's a playlist.
+    Returns:
+        - dict: A dictionary containing the download ID of the initiated download process.
+    Processing Logic:
+        - Creates a 'downloads' directory if it doesn't exist.
+        - Initializes a download entry in the downloads dictionary, which tracks the download's status, progress, and associated metadata.
+        - Uses yt_dlp library to handle the download, integrating progress and error reporting through a custom progress hook.
+        - Handles special case for playlists, marking individual items' states and progressing through them.
+        - Catches and manages exceptions, updating the download status to 'error' and including error details."""
     try:
         # Create a downloads directory if it doesn't exist
         os.makedirs("downloads", exist_ok=True)

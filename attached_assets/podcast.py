@@ -49,6 +49,18 @@ class YDLOptions(BaseModel):
     user_agent: str = Field(default='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
 
 class MyLogger:
+    """A simple logger class with methods for logging messages at different severity levels.
+    Attributes:
+        None
+    Methods:
+        - debug(msg): Logs a debug message after checking its format.
+        - info(msg): Logs an informational message.
+        - warning(msg): Logs a warning message.
+        - error(msg): Logs an error message.
+    Processing Logic:
+        - The debug method will first check if the message starts with '[debug] '. If not, it will treat the message as an informational message and call the info method.
+        - The info method logs messages directly.
+        - The warning and error methods add a prefix to the message to indicate the severity before printing."""
     def debug(self, msg):
         if not msg.startswith('[debug] '):
             self.info(msg)
@@ -63,12 +75,30 @@ class MyLogger:
         print(f"Error: {msg}")
 
 class YoutubeDownloader:
+    """YoutubeDownloader is a class for managing and executing media download tasks from YouTube with options to handle retries and format conversion.
+    Parameters:
+        - None
+    Processing Logic:
+        - Utilizes a logger to manage download events and states.
+        - Maintains a dictionary of active tasks with their current statuses.
+        - Provides methods to check system resource availability, ensuring downloads occur within safe limits."""
     def __init__(self):
         self.logger = MyLogger()
         self.active_tasks: Dict[str, str] = {} # task_id: status
 
     @celery.task(bind=True)
     def download_media(self, task, config: DownloadConfig):
+        """Download media files using specified configuration, handle retries, and convert formats if necessary.
+        Parameters:
+            - task (Task): Task object containing the details of the download request.
+            - config (DownloadConfig): Configuration object dictating download options such as URL and file format.
+        Returns:
+            - None
+        Processing Logic:
+            - Checks system resources before attempting to download.
+            - Utilizes a maximum of 5 retries upon facing download errors.
+            - Converts downloaded files to specified formats if needed, removing originals if conversion occurs.
+            - Updates the status of the download task based on its progress and outcome."""
         print("Downloading...")
         self.active_tasks[task.request.id] = "Downloading"
 
@@ -118,6 +148,16 @@ class YoutubeDownloader:
         self.active_tasks[task.request.id] = "Failed"
 
     def get_ydl_opts(self, config: DownloadConfig) -> YDLOptions:
+        """Get the YouTube download options configured based on the provided download configuration.
+        Parameters:
+            - config (DownloadConfig): The download configuration containing file format and quality settings.
+        Returns:
+            - YDLOptions: The YouTube download options configured with format, playlist and logging settings, and a template for output file naming.
+        Processing Logic:
+            - Constructs a format string using file format and quality from the configuration.
+            - Disables playlist downloading via noplaylist.
+            - Sets a custom logger for download events.
+            - Defines an output template for file naming in the download directory."""
         format_string = self.get_format_string(config.file_format, config.quality)
         
         ydl_opts = YDLOptions(
@@ -130,6 +170,16 @@ class YoutubeDownloader:
         return ydl_opts
 
     def get_format_string(self, file_format: str, quality: str) -> str:
+        """Return a format string based on file format and quality.
+        Parameters:
+            - file_format (str): The desired file format, options include 'mp4', 'webm', 'm4a', or 'mp3'.
+            - quality (str): The desired quality level, which can be 'high', 'medium', or any other value indicating a lower quality.
+        Returns:
+            - str: A format string suitable for use in media file selection, according to the specified format and quality.
+        Processing Logic:
+            - Chooses audio or video-based format based on file_format.
+            - Selects appropriate quality tier for video (mp4/webm) or audio (m4a/mp3) formats.
+            - Defaults to either 'worst' or other descriptors when exact match with 'high' or 'medium' is not made."""
         if file_format in ["mp4", "webm"]:
             if quality == "high":
                 return f'best[ext={file_format}]/best'
@@ -146,6 +196,18 @@ class YoutubeDownloader:
                 return f'worstaudio[ext=m4a]/worst[ext=m4a]/worst'
 
     def convert_file(self, input_file: str, output_file: str, output_format: str):
+        """Convert an input media file to specified audio or video format.
+        Parameters:
+            - input_file (str): The path to the input media file to be converted.
+            - output_file (str): The path where the converted file will be saved.
+            - output_format (str): The desired format for the output file, e.g., 'mp3', 'm4a', 'mp4', 'webm'.
+        Returns:
+            - None: This function does not return a value but saves the converted file to disk.
+        Processing Logic:
+            - Checks if the output format is supported; if not, raises a ValueError.
+            - Converts the file to audio formats ('mp3', 'm4a') using AudioFileClip.
+            - Converts the file to video formats ('mp4', 'webm') using VideoFileClip.
+            - Handles exceptions during video conversion by printing an error message."""
         print(f"Converting {input_file} to {output_format}...")
         if output_format in ['mp3', 'm4a']:
             audio = AudioFileClip(input_file)
@@ -163,6 +225,16 @@ class YoutubeDownloader:
 
     def check_resources(self):
         # Check CPU usage
+        """Checks system resource usage and determines if it is within acceptable limits for performing additional tasks.
+        Parameters:
+            - None
+        Returns:
+            - bool: Returns False if any of the resource usage metrics exceed set thresholds, otherwise returns True.
+        Processing Logic:
+            - Checks if CPU usage exceeds 80%.
+            - Checks if memory usage exceeds 80%.
+            - Checks if storage usage exceeds a predefined maximum percentage.
+            - Checks if the number of concurrent downloads exceeds the allowed maximum."""
         if psutil.cpu_percent(interval=1) > 80:
             return False
 
@@ -190,6 +262,14 @@ class YoutubeDownloader:
         return False
 
     def resume_task(self, task_id: str):
+        """Resume an active task if it exists.
+        Parameters:
+            - task_id (str): The identifier of the task to be resumed.
+        Returns:
+            - bool: True if the task is successfully resumed, False if the task does not exist.
+        Processing Logic:
+            - Checks if the task_id exists in the active tasks.
+            - Updates the status of the task to "Resumed" if it exists."""
         if task_id in self.active_tasks:
             # You would need to re-enqueue the task with the same config
             # This is a simplified version, you might need to store the config
@@ -221,6 +301,15 @@ async def create_download(config: DownloadConfig, background_tasks: BackgroundTa
 
 @app.get("/status/{task_id}")
 async def get_status(task_id: str):
+    """Get the status of an asynchronous task by its ID.
+    Parameters:
+        - task_id (str): The unique identifier of the asynchronous task.
+    Returns:
+        - dict: A dictionary containing the state of the task and its status message.
+    Processing Logic:
+        - If the task state is 'PENDING', the status is set to 'Pending...'.
+        - If the task state is not 'FAILURE', it retrieves the status from active tasks or defaults to 'Unknown'.
+        - In case of 'FAILURE', the exception info from the task is included in the status."""
     task = celery.AsyncResult(task_id)
     if task.state == 'PENDING':
         response = {

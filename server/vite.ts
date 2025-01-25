@@ -22,6 +22,19 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+/**
+ * Sets up Vite with custom configuration and integrates it with an Express server
+ * @example
+ * setupVite(app, server)
+ * // app will now use Vite middleware
+ * @param {Express} app - The Express application instance to which Vite is added.
+ * @param {Server} server - The server instance used for hot module replacement.
+ * @returns {Promise<void>} A promise that resolves once the Vite setup is complete.
+ * @description
+ *   - Utilizes a custom Vite logger to exit the process upon encountering an error.
+ *   - Configures Vite in middleware mode for integration with the Express app.
+ *   - Ensures `index.html` is reloaded from disk for live updates.
+ */
 export async function setupVite(app: Express, server: Server) {
   const vite = await createViteServer({
     ...viteConfig,
@@ -64,6 +77,18 @@ export async function setupVite(app: Express, server: Server) {
   });
 }
 
+/**
+ * Serves static files from the 'public' directory and falls back to 'index.html' for routes not found.
+ * @example
+ * serveStatic(app)
+ * // Static content served
+ * @param {Express} app - The Express application instance to configure static file serving.
+ * @returns {void} The function does not return a value.
+ * @description
+ *   - Ensures the 'public' directory exists before setting up static file serving.
+ *   - Throws an error if the 'public' directory is not found, instructing to build the client first.
+ *   - Uses wildcard route handling to send 'index.html' for any unmatched routes, supporting single-page applications.
+ */
 export function serveStatic(app: Express) {
   const distPath = path.resolve(__dirname, "public");
 

@@ -3,6 +3,19 @@ import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
 
+/**
+* Wraps the ResizablePrimitive.PanelGroup component with additional styling.
+* @example
+* myFunction({ className: "custom-class", someProp: value })
+* <ResizablePrimitive.PanelGroup ... />
+* @param {Object} ObjectArgument - Object containing className and other properties.
+* @param {string} ObjectArgument.className - Additional class names to style the panel group.
+* @param {React.ComponentProps<typeof ResizablePrimitive.PanelGroup>} ObjectArgument.props - Additional props for the PanelGroup component.
+* @returns {JSX.Element} A styled ResizablePrimitive.PanelGroup component.
+* @description
+*   - The PanelGroup will adapt its direction based on its data attribute, allowing for either a vertical or horizontal layout.
+*   - Utilizes utility function 'cn' to concatenate multiple class names.
+*/
 const ResizablePanelGroup = ({
   className,
   ...props
@@ -18,6 +31,20 @@ const ResizablePanelGroup = ({
 
 const ResizablePanel = ResizablePrimitive.Panel
 
+/**
+* Renders a resizable panel handle with optional grip UI.
+* @example
+* renderResizableHandle({ withHandle: true, className: 'custom-class' })
+* // Renders a JSX element with the specified className and grip handle.
+* @param {boolean} withHandle - Optional flag to include a grip handle in the panel.
+* @param {string} className - Additional CSS class names to apply to the handle.
+* @param {object} props - Additional properties passed to the PanelResizeHandle component.
+* @returns {JSX.Element} A rendered PanelResizeHandle component with optional grip handle.
+* @description
+*   - Uses ResizablePrimitive.PanelResizeHandle as the underlying handle element.
+*   - Applies conditional styles based on panel group direction.
+*   - Leverages Tailwind CSS for styling.
+*/
 const ResizableHandle = ({
   withHandle,
   className,
